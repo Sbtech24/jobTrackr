@@ -1,20 +1,29 @@
-import type { Metadata } from "next";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/Dashboard/Sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 
-
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Welcome",
-};
-
-
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-  
-        <main>{children}</main>
-     
-  )
+    <SidebarProvider>
+      <AppSidebar />
+      <main>
+        <SidebarTrigger />
+        <section>
+          <Input placeholder="search for a Job, status,company..." />
+
+          {/* User profile */}
+          <div>
+            <p>Semilore</p>
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          </div>
+        </section>
+        <Input />
+        {children}
+      </main>
+    </SidebarProvider>
+  );
 }
