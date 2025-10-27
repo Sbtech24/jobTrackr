@@ -1,10 +1,16 @@
 import dotenv from "dotenv"
-import {Pool} from "pg"
+import {Client} from "pg"
 
 dotenv.config()
 
- const pool = new Pool({
-    connectionString:process.env.DATABASE_URL
+ const conn = new Client({
+ user: 'postgres',
+  password: 'admin',
+  host: 'localhost',
+  port: 5432,
+  database: 'jobTrackr',
 })
 
-export {pool}
+await conn.connect()
+
+export {conn}

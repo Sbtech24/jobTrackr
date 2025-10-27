@@ -1,15 +1,21 @@
-import {pool}from "./db"
+import {conn}from "./db"
 
 export async function initDb(){
-    await pool.query(`
+    try{
+        await conn.query(`
         CREATE TABLE IF NOT EXISTS jobs(
         id SERIAL PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        company VARCHAR(255),
-        status VARCHAR(50) DEFAULT 'pending,
-        created_at TIMESTAMP DEFAULT NOW()
+        title TEXT NOT NULL,
+        company TEXT NOT NULL,
+        status TEXT, 
+        description VARCHAR(255),
+        date_applied TIMESTAMP DEFAULT NOW()
         )
-        
         `)
-        console.log('Database Initailized')
+        console.log(`Database connected successfully`)
+    }catch(err){
+        console.log('Erro connecting to db')
+
+    }
+    
 }
