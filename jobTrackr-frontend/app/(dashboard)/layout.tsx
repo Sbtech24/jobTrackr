@@ -7,21 +7,30 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
+        <SidebarTrigger className="hidden" />
+
+
       <main>
-        <SidebarTrigger />
-        <section>
-          <Input placeholder="search for a Job, status,company..." />
+        <section className="w-full">
+          <Input placeholder="search for a Job, status,company..." className="hidden md:block"/>
 
           {/* User profile */}
-          <div>
+          <div className="flex justify-end">
+            <div className="flex items-center gap-2">
             <p>Semilore</p>
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </div>
+        <SidebarTrigger className="sm:hidden" />
+
+
+          </div>
+          
+          
         </section>
-        <Input />
+    
         {children}
       </main>
     </SidebarProvider>

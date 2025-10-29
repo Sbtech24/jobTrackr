@@ -1,4 +1,4 @@
-import {  Home, Inbox, CirclePlus , ChartLine,Settings } from "lucide-react"
+import {  Home, Inbox, CirclePlus , ChartLine,Settings,Briefcase } from "lucide-react"
 
 import {
   Sidebar,
@@ -42,10 +42,11 @@ const items = [
 
 export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar className="bg-primary">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>JobTrackr</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-white text-lg flex items-center gap-3"><Briefcase />
+            JobTrackr</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
