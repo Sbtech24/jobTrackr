@@ -6,33 +6,40 @@ import { Input } from "@/components/ui/input";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
-      <AppSidebar />
-        <SidebarTrigger className="hidden" />
+      {/* Root Flex Container */}
+      <div className="flex min-h-screen w-full bg-jobtrackr-background overflow-hidden">
+        {/* Sidebar */}
+        <AppSidebar />
 
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Header */}
+          <header className="flex items-center justify-between px-4 sm:px-8 py-4 border-b bg-white shadow-sm w-full">
+            {/* Left Section */}
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <SidebarTrigger className="block sm:hidden" />
+              <Input
+                placeholder="Search for a job, status, company..."
+                className="hidden md:block w-[350px] rounded-xl border-gray-300 focus:ring-2 focus:ring-jobtrackr-primary focus:border-jobtrackr-primary"
+              />
+            </div>
 
-      <main>
-        <section className="w-full">
-          <Input placeholder="search for a Job, status,company..." className="hidden md:block"/>
+            {/* Right Section */}
+            <div className="flex items-center gap-3">
+              <p className="font-medium text-gray-700 hidden sm:block">Semilore</p>
+              <Avatar className="h-9 w-9 ring-2 ring-jobtrackr-primary/10">
+                <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+                <AvatarFallback>SB</AvatarFallback>
+              </Avatar>
+            </div>
+          </header>
 
-          {/* User profile */}
-          <div className="flex justify-end">
-            <div className="flex items-center gap-2">
-            <p>Semilore</p>
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-          </div>
-        <SidebarTrigger className="sm:hidden" />
-
-
-          </div>
-          
-          
-        </section>
-    
-        {children}
-      </main>
+          {/* Main Page Content */}
+          <main className="flex-1 w-full overflow-y-auto px-4 sm:px-8 py-6">
+            {children}
+          </main>
+        </div>
+      </div>
     </SidebarProvider>
   );
 }
