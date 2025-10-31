@@ -4,7 +4,7 @@ export async function initDb(){
     try{
         await conn.query(`
         CREATE TABLE IF NOT EXISTS jobs(
-        id SERIAL PRIMARY KEY,
+        id UUID  PRIMARY KEY DEFAULT gen_random_uuid(),
         title TEXT NOT NULL,
         company TEXT NOT NULL,
         status TEXT, 

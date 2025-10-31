@@ -70,19 +70,54 @@ export async function getSingleJob(req:Request,res:Response,next:NextFunction){
 }
 export async function updateJob(req:Request,res:Response,next:NextFunction){
     try{
-        const {id} = req.params
-        const {title,company,status,description} = req.body
-        if(title){
-            const query = `UPDATE jobs SET title= $1 WHERE id = ${id}`
-            const result = await conn.query(query,[title])
-            const updated = result.rows 
-            
-            if(updated.length === 0 ){
-                return res.status(401).json({message:"No Job found"})
-            }
-        return res.status(200).json({message:"Job Updated",data:updated})
+        const { id } = req.params;
+    const { title, company, status, description } = req.body;
 
-        }
+    // Make sure there’s something to update
+    if (!title && !company && !status && !description) {
+      return res.status(400).json({ message: "No fields provided for update" });
+    }
+
+    // Dynamically build update query
+    const fields: string[] = [];
+    const values: any[] = [];
+    let index = 1;
+
+    if (title) {
+      fields.push(`title = $${index++}`);
+      values.push(title);
+    }
+    if (company) {
+      fields.push(`company = $${index++}`);
+      values.push(company);
+    }
+    if (status) {
+      fields.push(`status = $${index++}`);
+      values.push(status);
+    }
+    if (description) {
+      fields.push(`description = $${index++}`);
+      values.push(description);
+    }
+
+    values.push(id); 
+        const query = `
+      UPDATE jobs 
+      SET ${fields.join(", ")} 
+      WHERE id = $${index}
+      RETURNING *;
+    `;
+
+    const result = await conn.query(query, values);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    return res.status(200).json({
+      message: "Job updated successfully",
+      data: result.rows[0],
+    });
     }catch(err){
         next(err)
         res.status(404).json({error:"Erro can't add new Job"})
@@ -93,19 +128,20 @@ export async function updateJob(req:Request,res:Response,next:NextFunction){
 export async function deleteJob(req:Request,res:Response,next:NextFunction){
     try{
         const {id} = req.params
-        const query = `DELETE FROM jobs WHERE id=$1`
+        const query = `DELETE FROM jobs WHERE id = $1 RETURNING *`
         const result  = await conn.query(query,[id])
         const affected = result.rows
-        if(affected.length ==0){
+
+        if(affected.length === 0){
             return res.status(404).json({message:"No job deleted, try valid job"})
         }
 
-    res.status(200).json({message:"deleted job"})
+    return res.status(200).json({message:"deleted job",deletedJob: affected[0],})
 
 
     }catch(err){
         next(err)
-        res.status(404).json({error:"Erro can't add new Job"})
+        res.status(404).json({error:"internal server error"})
     }
 
 }

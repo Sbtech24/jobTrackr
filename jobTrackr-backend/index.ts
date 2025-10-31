@@ -1,7 +1,6 @@
 import express from "express"
 import dotenv from "dotenv"
 import morgan from "morgan"
-import { pool } from "./config/db"
 import { initDb } from "./config/initDb"
 import jobRoutes from "./routes/jobs.routes"
 
