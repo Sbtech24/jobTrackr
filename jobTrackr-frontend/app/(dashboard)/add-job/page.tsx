@@ -120,7 +120,7 @@ export default function AddJob() {
             <div className="pt-4">
               <Button
                 type="submit"
-                className="w-full bg-jobtrackr-primary hover:bg-jobtrackr-primary-dark text-white font-medium rounded-xl"
+                className="w-full bg-blue-500 cursor-pointer hover:bg-blue-800 text-white font-medium rounded-xl"
               >
                 Save Job
               </Button>

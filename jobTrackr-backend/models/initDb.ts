@@ -1,10 +1,10 @@
-import {conn}from "./db"
+import {conn}from "../config/db"
 
 export async function initDb(){
     try{
         await conn.query(`
         CREATE TABLE IF NOT EXISTS jobs(
-        id UUID  PRIMARY KEY DEFAULT gen_random_uuid(),
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         title TEXT NOT NULL,
         company TEXT NOT NULL,
         status TEXT, 
@@ -14,7 +14,7 @@ export async function initDb(){
         `)
         console.log(`Database connected successfully`)
     }catch(err){
-        console.log('Erro connecting to db')
+        console.log('Error connecting to db')
 
     }
     

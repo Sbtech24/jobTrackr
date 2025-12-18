@@ -60,7 +60,7 @@ export default function Settings() {
             />
           </div>
 
-          <Button className="bg-jobtrackr-primary hover:bg-jobtrackr-primary-dark text-white font-medium px-6 py-2 rounded-lg">
+          <Button className="bg-primary hover:bg-primary-light text-white font-medium px-6 py-2 rounded-lg">
             Update Password
           </Button>
         </div>
