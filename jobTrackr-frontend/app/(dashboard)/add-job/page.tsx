@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +12,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea"; // s
 import { useState } from "react";
+import dynamic from "next/dynamic";
 
 export default function AddJob() {
   const [form, setForm] = useState({
@@ -73,7 +73,6 @@ export default function AddJob() {
               <div className="space-y-2">
                 <Label>Status</Label>
                 <Select
-            
                   value={form.status}
                   onValueChange={(val) => handleChange("status", val)}
                   
