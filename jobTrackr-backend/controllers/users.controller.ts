@@ -11,7 +11,7 @@ const JWT_SECRET = process.env.JWT_SECRET
 export async function RegisterUser(req:Request,res:Response,next:NextFunction){
     try{
         const {username,password} = req.body
-        // chech existing user 
+    
         const query = `select username from users WHERE username = $1`
         const existing  = await conn.query(query,[username])
         if(existing){
@@ -38,8 +38,6 @@ export async function Login(req:Request,res:Response,next:NextFunction){
     try{
          const {username,password} = req.body
 
-    // compare password 
-    // get hashpassword 
     const query = `SELECT * from users WHERE username = $1`
     const result = await conn.query(query,[username])
     const user = result.rows[0]
