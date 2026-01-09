@@ -1,16 +1,22 @@
 import type { Request, Response,NextFunction } from "express";
 import { conn } from "../config/db";
+import type { AuthRequest } from "../middlewares/AuthMiddleware";
 
 
-export async function addJob(req:Request,res:Response,next:NextFunction){
+export async function addJob(req:AuthRequest,res:Response,next:NextFunction){
     try{
+        const user = req.user.id
+        if(!user){
+            return res.status(401).json({message:"Unauthorized"})
+        }
+
         const {title,company,status,description} = req.body 
 
         if(!title||!company||!status||!description){
             res.status(400).json({message:"Please provide all neccessary information"})
         }
-        const query = `INSERT INTO jobs(title,company,status,description) VALUES($1,$2,$3,$4) RETURNING *`
-        const result = await conn.query(query,[title,company,status,description])
+        const query = `INSERT INTO jobs(title,company,status,description,user_id) VALUES($1,$2,$3,$4,$5) RETURNING *`
+        const result = await conn.query(query,[title,company,status,description,user])
         const created = result.rows[0]
         
     res.status(201).json({
@@ -29,10 +35,14 @@ export async function addJob(req:Request,res:Response,next:NextFunction){
     }
 
 }
-export async function getAllJobs(req:Request,res:Response,next:NextFunction){
+export async function getAllJobs(req:AuthRequest,res:Response,next:NextFunction){
     try{
-        const query = `SELECT * from jobs`
-        const result  = await conn.query(query)
+        const user = req.user.id
+        if(!user){
+            return res.status(401).json({message:"Unauthorized"})
+        }
+        const query = `SELECT * from jobs Where user_id = $1`
+        const result  = await conn.query(query,[user])
         const created  = result.rows
 
         if(created.length === 0 ){
@@ -48,11 +58,15 @@ export async function getAllJobs(req:Request,res:Response,next:NextFunction){
     }
 
 }
-export async function getSingleJob(req:Request,res:Response,next:NextFunction){
+export async function getSingleJob(req:AuthRequest,res:Response,next:NextFunction){
     try{
+        const user = req.user.id
+        if(!user){
+            return res.status(401).json({message:"Unauthorized"})
+        }
         const {id} = req.params
-        const query  = `SELECT * FROM jobs WHERE id=$1`
-        const result  = await conn.query(query,[id])
+        const query  = `SELECT * FROM jobs WHERE user_id=$1 AND id =$2`
+        const result  = await conn.query(query,[user,id])
         const created =  result.rows
 
         if(created.length === 0){
@@ -68,43 +82,59 @@ export async function getSingleJob(req:Request,res:Response,next:NextFunction){
     }
 
 }
-export async function updateJob(req:Request,res:Response,next:NextFunction){
-    try{
-        const { id } = req.params;
+export async function updateJob(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { id } = req.params;
     const { title, company, status, description } = req.body;
 
-    // Make sure there’s something to update
     if (!title && !company && !status && !description) {
-      return res.status(400).json({ message: "No fields provided for update" });
+      return res
+        .status(400)
+        .json({ message: "No fields provided for update" });
     }
 
-    // Dynamically build update query
     const fields: string[] = [];
     const values: any[] = [];
-    let index = 1;
+
+    // user_id is always $1
+    values.push(userId);
 
     if (title) {
-      fields.push(`title = $${index++}`);
+      fields.push(`title = $${values.length + 1}`);
       values.push(title);
     }
+
     if (company) {
-      fields.push(`company = $${index++}`);
+      fields.push(`company = $${values.length + 1}`);
       values.push(company);
     }
+
     if (status) {
-      fields.push(`status = $${index++}`);
+      fields.push(`status = $${values.length + 1}`);
       values.push(status);
     }
+
     if (description) {
-      fields.push(`description = $${index++}`);
+      fields.push(`description = $${values.length + 1}`);
       values.push(description);
     }
 
-    values.push(id); 
-        const query = `
-      UPDATE jobs 
-      SET ${fields.join(", ")} 
-      WHERE id = $${index}
+    // job id (last param)
+    values.push(id);
+
+    const query = `
+      UPDATE jobs
+      SET ${fields.join(", ")}
+      WHERE user_id = $1 AND id = $${values.length}
       RETURNING *;
     `;
 
@@ -118,18 +148,21 @@ export async function updateJob(req:Request,res:Response,next:NextFunction){
       message: "Job updated successfully",
       data: result.rows[0],
     });
-    }catch(err){
-        next(err)
-        res.status(404).json({error:"Erro can't add new Job"})
-    }
-
+  } catch (err) {
+    next(err);
+  }
 }
 
-export async function deleteJob(req:Request,res:Response,next:NextFunction){
+
+export async function deleteJob(req:AuthRequest,res:Response,next:NextFunction){
     try{
+         const user = req.user?.id;
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
         const {id} = req.params
-        const query = `DELETE FROM jobs WHERE id = $1 RETURNING *`
-        const result  = await conn.query(query,[id])
+        const query = `DELETE FROM jobs WHERE user_id = $1 AND id=$2 RETURNING *`
+        const result  = await conn.query(query,[user,id])
         const affected = result.rows
 
         if(affected.length === 0){

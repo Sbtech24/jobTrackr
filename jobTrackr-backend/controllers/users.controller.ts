@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { conn } from "../config/db";
 import dotenv from "dotenv";
+import type { AuthRequest } from "../middlewares/AuthMiddleware";
 
 dotenv.config();
 
@@ -64,7 +65,7 @@ export async function Login(req: Request, res: Response, next: NextFunction) {
     }
 
     const accessToken = jwt.sign(
-      { username: user.username, password: user.password },
+      {id:user.id, username: user.username, password: user.password },
       ACCESS_TOKEN_SECRET,
       { expiresIn: "1h" }
     );
@@ -96,3 +97,33 @@ export async function Login(req: Request, res: Response, next: NextFunction) {
     return res.status(500).json({ message: "Internal server error" });
   }
 }
+export async function ForgotPassword(req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    const user = req.user.id
+
+    if(!user){
+      return res.status(401).json({message:"Unauthorized"})
+    }
+
+    const { newPassword, confirmPassword } = req.body;
+
+    if(newPassword !== confirmPassword){
+     return res.status(404).json({message:"Passoword missmatch"})
+
+    }
+     const saltRounds = 10
+      const hasPassword  = await bcrypt.hash(newPassword,saltRounds)
+      const query  =  `UPDATE users SET password =$1 WHERE id= $2`
+      const result =  (await conn.query(query,[hasPassword,user])).rows[0]
+      console.log(result)
+       return res
+      .status(201)
+      .json({ message: `Password Updated successfully` });
+
+ 
+  } catch (err) {
+    next(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+

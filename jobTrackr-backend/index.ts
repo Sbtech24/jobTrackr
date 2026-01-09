@@ -6,6 +6,7 @@ import jobRoutes from "./routes/jobs.routes"
 import userRoutes from "./routes/users.routes"
 import { initUserTable } from "./models/initUserTableDb"
 import cookieParser from "cookie-parser"
+import { AuthMiddleWare } from "./middlewares/AuthMiddleware"
 
 
 
@@ -27,7 +28,7 @@ app.use(cookieParser())
 
 // Routes
 app.use("/api/v1/auth",userRoutes)
-app.use("/api/v1/jobs",jobRoutes)
+app.use("/api/v1/jobs",AuthMiddleWare,jobRoutes)
 
 app.listen(process.env.PORT, async ()=>{
     await initDb()
