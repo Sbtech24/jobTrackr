@@ -20,7 +20,7 @@ export async function RegisterUser(
 
     const query = `SELECT * from users WHERE username = $1`;
     const existing = await conn.query(query, [username]);
-    const checkUser = existing.rows[0]
+    const checkUser = existing.rows[0];
     if (checkUser) {
       return res.status(400).json({ message: "Username already exists" });
     }
@@ -49,7 +49,8 @@ export async function Login(req: Request, res: Response, next: NextFunction) {
 
     const query = `SELECT * from users WHERE username = $1`;
     const result = await conn.query(query, [username]);
-    if(result.rows.length === 0 ) return res.status(404).json({mesage:"User not found"})
+    if (result.rows.length === 0)
+      return res.status(404).json({ mesage: "User not found" });
     const user = result.rows[0];
     const hash = result.rows[0].password;
     const comparePassword = await bcrypt.compare(password, hash);
@@ -65,26 +66,27 @@ export async function Login(req: Request, res: Response, next: NextFunction) {
     }
 
     const accessToken = jwt.sign(
-      {id:user.id, username: user.username, password: user.password },
+      { id: user.id, username: user.username, password: user.password },
       ACCESS_TOKEN_SECRET,
       { expiresIn: "1h" }
     );
     const refreshToken = jwt.sign(
-      { username: user.username },
+      { id: user.id, username: user.username },
       REFRESH_TOKEN_SECRET as string,
       { expiresIn: "1d" }
     );
-    console.log(refreshToken)
+   
 
-    const insertQuery =await conn.query( `UPDATE users SET refresh_token = $1 WHERE id = $2 RETURNING id`,
-      [refreshToken,user.id]
+    const insertQuery = await conn.query(
+      `UPDATE users SET refresh_token = $1 WHERE id = $2 RETURNING id`,
+      [refreshToken, user.id]
     );
 
     if (result.rowCount === 0) {
-  throw new Error("User not found");
-}
+      throw new Error("User not found");
+    }
 
-    const dbresult = insertQuery.rows[0]
+    const dbresult = insertQuery.rows[0];
 
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
@@ -97,33 +99,94 @@ export async function Login(req: Request, res: Response, next: NextFunction) {
     return res.status(500).json({ message: "Internal server error" });
   }
 }
-export async function ForgotPassword(req: AuthRequest, res: Response, next: NextFunction) {
+export async function RefreshToken(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    const user = req.user.id
+    const cookies = req.cookies;
 
-    if(!user){
-      return res.status(401).json({message:"Unauthorized"})
+    if (Object.keys(cookies).length === 0) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized access please log in" });
     }
+    //  Verify the refersh token
+    const verifyToken = jwt.verify(
+      cookies.jwt,
+      process.env.REFRESH_TOKEN_SECRET as string
+    );
+    req.user = verifyToken;
+    const user = req.user
+    const username = req.user?.username;
 
-    const { newPassword, confirmPassword } = req.body;
+    const query = `SELECT refresh_token FROM users WHERE username =$1 `;
+    const result = await conn.query(query, [username]);
+    const refresh = result.rows[0].refresh_token;
+   
 
-    if(newPassword !== confirmPassword){
-     return res.status(404).json({message:"Passoword missmatch"})
+    
+      if (cookies.jwt == refresh) {
+        const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET as string);
+        res.status(201).json({ accessToken });
+      }
 
+  } catch (err) {
+    next(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+export async function Logout(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const cookies = req.cookies;
+    
+    if (!cookies) {
+      return res
+        .status(200)
+        .json({ message: "Logout successful" });
     }
-     const saltRounds = 10
-      const hasPassword  = await bcrypt.hash(newPassword,saltRounds)
-      const query  =  `UPDATE users SET password =$1 WHERE id= $2`
-      const result =  (await conn.query(query,[hasPassword,user])).rows[0]
-      console.log(result)
-       return res
-      .status(201)
-      .json({ message: `Password Updated successfully` });
+    //  Invalidate the cookies
+  res.clearCookie("jwt",{
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    })
+    res.status(200).json({message: "Logout successful"})
 
- 
   } catch (err) {
     next(err);
     return res.status(500).json({ message: "Internal server error" });
   }
 }
 
+export async function ForgotPassword(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = req.user.id;
+
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { newPassword, confirmPassword } = req.body;
+
+    if (newPassword !== confirmPassword) {
+      return res.status(404).json({ message: "Passoword missmatch" });
+    }
+    const saltRounds = 10;
+    const hasPassword = await bcrypt.hash(newPassword, saltRounds);
+    const query = `UPDATE users SET password =$1 WHERE id= $2`;
+    const result = (await conn.query(query, [hasPassword, user])).rows[0];
+    return res.status(201).json({ message: `Password Updated successfully` });
+  } catch (err) {
+    next(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
