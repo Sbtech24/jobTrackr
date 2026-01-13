@@ -22,10 +22,15 @@ export const AuthMiddleWare = (req:AuthRequest,res:Response,next:NextFunction) =
   }
    try {
     const decoded = jwt.verify(token,process.env.ACCESS_TOKEN_SECRET  as string) as JwtPayload
+    console.log(decoded)
+
+  if (!decoded) {
+    return res.status(401).json({ message: "Unauthorized" })
+  }
     req.user = decoded
     next()
+
   } catch (error) {
-    console.log(error)
-    return res.status(401).json({ message: "Invalid token" })
+    return res.status(401).json({ message: "Unauthorized" })
   }
 }

@@ -46,10 +46,10 @@ export async function getAllJobs(req:AuthRequest,res:Response,next:NextFunction)
         const created  = result.rows
 
         if(created.length === 0 ){
-            return res.status(200).json({message:"No jobs found",data:created})
+            return res.status(200).json({success: true,message:"No jobs found",data:created})
         }
 
-    res.status(200).json({data:created})
+    res.status(200).json({success: true,data:created})
 
 
     }catch(err){
@@ -73,7 +73,7 @@ export async function getSingleJob(req:AuthRequest,res:Response,next:NextFunctio
            return res.status(404).json({error:'Not Found',message:"Job not found "})
         }
     
-    res.status(200).json({data:created})
+    res.status(200).json({success: true,data:created})
 
 
     }catch(err){
@@ -145,6 +145,7 @@ export async function updateJob(
     }
 
     return res.status(200).json({
+      success: true,
       message: "Job updated successfully",
       data: result.rows[0],
     });
@@ -169,7 +170,7 @@ export async function deleteJob(req:AuthRequest,res:Response,next:NextFunction){
             return res.status(404).json({message:"No job deleted, try valid job"})
         }
 
-    return res.status(200).json({message:"deleted job",deletedJob: affected[0],})
+    return res.status(200).json({success: true,message:"deleted job",deletedJob: affected[0],})
 
 
     }catch(err){
