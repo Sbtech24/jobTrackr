@@ -1,7 +1,49 @@
+"use client";
+
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import axios from "axios";
+import { forgotPassword } from "@/lib/api/auth";
 
+type ForgotPasswordFormData = {
+  newPassword: string;
+  confirmPassword: string;
+};
 export default function Settings() {
+  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ForgotPasswordFormData>();
+
+  const onSubmit = async (data: ForgotPasswordFormData) => {
+    setServerError(null);
+    setLoading(true);
+
+    try {
+      const response = await forgotPassword({
+        newPassword: data.newPassword,
+        confirmPassword: data.confirmPassword,
+      });
+      console.log(response)
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setServerError(error.response?.data?.message || "Login failed");
+      } else {
+        setServerError("Something went wrong");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="p-4 sm:p-8 space-y-8">
       <h1 className="text-gray-800 text-2xl sm:text-3xl font-semibold">
@@ -27,7 +69,10 @@ export default function Settings() {
             </div>
 
             <div className="flex flex-col space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-gray-600">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium text-gray-600"
+              >
                 Email
               </label>
               <input
@@ -52,15 +97,21 @@ export default function Settings() {
               type="password"
               placeholder="New Password"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-jobtrackr-primary focus:ring-1 focus:ring-jobtrackr-primary"
+              {...register("newPassword", {
+                required: "password is required",
+              })}
             />
             <input
               type="password"
               placeholder="Confirm New Password"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-jobtrackr-primary focus:ring-1 focus:ring-jobtrackr-primary"
+              {...register("confirmPassword", {
+                required: "confirm password",
+              })}
             />
           </div>
 
-          <Button className="bg-primary hover:bg-primary-light text-white font-medium px-6 py-2 rounded-lg">
+          <Button className="bg-primary hover:bg-primary-light text-white font-medium px-6 py-2 rounded-lg" onClick={handleSubmit(onSubmit)}>
             Update Password
           </Button>
         </div>

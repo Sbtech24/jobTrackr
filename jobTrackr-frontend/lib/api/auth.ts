@@ -5,6 +5,10 @@ export type LoginPayload = {
   username: string;
   password: string;
 };
+export type ForgotPasswordPayload = {
+  newPassword: string;
+  confirmPassword: string;
+};
 
 export async function loginUser(data: LoginPayload) {
   const res = await api.post("/auth/login", data);
@@ -15,4 +19,9 @@ export async function loginUser(data: LoginPayload) {
 export async function refreshAccessToken() {
   const res = await api.post("/auth/refresh");
   setAccessToken(res.data.accessToken);
+}
+
+export async function forgotPassword(data:ForgotPasswordPayload) {
+  const res = await api.post("/auth/forgot-password",data);
+  return res.data
 }
