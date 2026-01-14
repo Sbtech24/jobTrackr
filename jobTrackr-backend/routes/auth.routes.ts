@@ -8,5 +8,5 @@ router.route("/login").post(Login)
 router.route("/register").post(RegisterUser)
 router.route("/forgot-password").post(AuthMiddleWare,ForgotPassword)
 router.route("/refresh").post(RefreshToken)
-router.route("/logout").get(Logout)
+router.route("/logout").post(Logout)
 export default router

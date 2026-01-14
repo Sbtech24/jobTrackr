@@ -20,7 +20,9 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-
+import { logOut } from "@/lib/api/auth"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 const items = [
   {
     title: "Dashboard",
@@ -45,6 +47,21 @@ const items = [
 ]
 
 export function AppSidebar() {
+  const router = useRouter()
+  const [serverError, setServerError] = useState<string | null>(null);
+  
+
+
+  const handleLogout = async ()=>{
+    try{
+      const response = await logOut()
+      console.log(response)
+      router.push("/login")
+
+    }catch(error){
+      console.log(error)
+    }
+  }
   return (
     <Sidebar className="bg-primary text-white">
       <SidebarContent className="flex h-full flex-col px-4 py-6">
@@ -107,9 +124,7 @@ export function AppSidebar() {
             </div>
 
             <button
-              onClick={() => {
-                // logout logic here
-              }}
+              onClick={handleLogout}
               className="
                 flex items-center gap-2
                 text-sm text-white/70
