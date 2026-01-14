@@ -32,7 +32,7 @@ app.use(limiter)
 // cors
 app.use(cors(
     {
-        origin:["http://localhost:5000"],
+        origin:["http://localhost:3000"],
         optionsSuccessStatus: 200,
         credentials:true
     }

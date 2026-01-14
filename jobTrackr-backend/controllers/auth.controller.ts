@@ -66,7 +66,7 @@ export async function Login(req: Request, res: Response, next: NextFunction) {
     }
 
     const accessToken = jwt.sign(
-      { id: user.id, username: user.username, password: user.password },
+      { id: user.id, username: user.username },
       ACCESS_TOKEN_SECRET,
       { expiresIn: "1h" }
     );
@@ -107,10 +107,8 @@ export async function RefreshToken(
   try {
     const cookies = req.cookies;
 
-    if (Object.keys(cookies).length === 0) {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized access please log in" });
+     if (!cookies?.jwt) {
+      return res.status(401).json({ message: "Unauthorized, please log in" });
     }
     //  Verify the refersh token
     const verifyToken = jwt.verify(
@@ -123,14 +121,15 @@ export async function RefreshToken(
 
     const query = `SELECT refresh_token FROM users WHERE username =$1 `;
     const result = await conn.query(query, [username]);
-    const refresh = result.rows[0].refresh_token;
-   
+     const storedRefresh = result.rows[0]?.refresh_token;
 
-    
-      if (cookies.jwt == refresh) {
-        const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET as string);
-        res.status(201).json({ accessToken });
-      }
+    if (!storedRefresh || storedRefresh !== cookies.jwt) {
+      return res.status(403).json({ message: "Refresh token mismatch" });
+    }
+
+      const accessToken = jwt.sign({ id: user.id, username: user.username }, ACCESS_TOKEN_SECRET as string, { expiresIn: "1h" });
+
+    return res.status(200).json({ accessToken });
 
   } catch (err) {
     next(err);

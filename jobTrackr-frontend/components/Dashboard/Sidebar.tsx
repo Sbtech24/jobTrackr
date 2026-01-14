@@ -24,22 +24,22 @@ import {
 const items = [
   {
     title: "Dashboard",
-    url: "/",
+    url: "/dashboard",
     icon: Home,
   },
   {
     title: "Add Job",
-    url: "/add-job",
+    url: "/dashboard/add-job",
     icon: CirclePlus,
   },
   {
     title: "Stats",
-    url: "/stats",
+    url: "/dashboard/stats",
     icon: ChartLine,
   },
   {
     title: "Settings",
-    url: "/settings",
+    url: "/dashboard/settings",
     icon: Settings,
   },
 ]

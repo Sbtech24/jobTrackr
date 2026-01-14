@@ -39,7 +39,7 @@ export async function getAllJobs(req:AuthRequest,res:Response,next:NextFunction)
     try{
         const user = req.user.id
         if(!user){
-            return res.status(401).json({message:"Unauthorized"})
+            return res.status(401).json({message:"Unauthorized access"})
         }
         const query = `SELECT * from jobs Where user_id = $1`
         const result  = await conn.query(query,[user])
