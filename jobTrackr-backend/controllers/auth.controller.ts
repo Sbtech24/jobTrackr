@@ -177,7 +177,7 @@ export async function ForgotPassword(
     const { newPassword, confirmPassword } = req.body;
 
     if (newPassword !== confirmPassword) {
-      return res.status(404).json({ message: "Passoword missmatch" });
+      return res.status(404).json({ message: "Password missmatch" });
     }
     const saltRounds = 10;
     const hasPassword = await bcrypt.hash(newPassword, saltRounds);

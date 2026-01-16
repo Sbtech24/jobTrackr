@@ -18,7 +18,38 @@ const jobData = [
   { name: "Interview", value: 2 },
   { name: "Discarded", value: 2 },
 ];
+import { Briefcase, Clock, MessageSquare, XCircle } from "lucide-react";
 
+const jobStats = [
+  {
+    label: "New",
+    value: 2,
+    icon: Briefcase,
+    bg: "bg-blue-50",
+    text: "text-blue-700",
+  },
+  {
+    label: "In Progress",
+    value: 3,
+    icon: Clock,
+    bg: "bg-amber-50",
+    text: "text-amber-700",
+  },
+  {
+    label: "Interview",
+    value: 2,
+    icon: MessageSquare,
+    bg: "bg-purple-50",
+    text: "text-purple-700",
+  },
+  {
+    label: "Discarded",
+    value: 2,
+    icon: XCircle,
+    bg: "bg-red-50",
+    text: "text-red-700",
+  },
+];
 export default function Dashboard() {
   return (
     <div className="p-4 sm:p-8 space-y-10 bg-gray-50 min-h-screen">
@@ -27,35 +58,52 @@ export default function Dashboard() {
       </h1>
 
       {/* Job Stats */}
-      <section>
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-6">
+       {/* Overview */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-800">
-            Job Applications
+            Overview
           </h2>
+          <p className="text-sm text-gray-500">
+            Your job application summary
+          </p>
+        </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {jobData.map((item, i) => (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {jobStats.map((stat) => {
+            const Icon = stat.icon;
+
+            return (
               <div
-                key={i}
+                key={stat.label}
                 className="
-                  rounded-xl border border-gray-200
-                  p-4 bg-white
-                  transition
-                  hover:border-indigo-300
-                  hover:bg-indigo-50/40
-                  hover:shadow-md
-                  cursor-pointer
+                  rounded-2xl border border-gray-200 bg-white
+                  p-5 transition
+                  hover:shadow-sm
                 "
               >
-                <p className="text-sm font-medium text-gray-500 capitalize">
-                  {item.name}
-                </p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900">
-                  {item.value}
-                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">
+                      {stat.label}
+                    </p>
+                    <p className="mt-2 text-3xl font-semibold text-gray-900">
+                      {stat.value}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`
+                      h-10 w-10 rounded-full flex items-center justify-center
+                      ${stat.bg} ${stat.text}
+                    `}
+                  >
+                    <Icon size={18} />
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </section>
 

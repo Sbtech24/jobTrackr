@@ -6,7 +6,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Eye, Pen } from "lucide-react";
+import { Eye, Pencil } from "lucide-react";
+import clsx from "clsx";
 
 export const jobs = [
   {
@@ -59,37 +60,76 @@ export const jobs = [
   },
 ];
 
+const statusStyles: Record<string, string> = {
+  Applied: "bg-gray-100 text-gray-700",
+  Interview: "bg-blue-50 text-blue-700",
+  Offer: "bg-purple-50 text-purple-700",
+  Rejected: "bg-red-50 text-red-700",
+};
+
 export default function MyJobsTable() {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Job Title</TableHead>
-          <TableHead>Company</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Type</TableHead>
-          <TableHead>Date Applied</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {jobs.map((job) => (
-          <TableRow key={job.id}>
-            <TableCell>{job.title}</TableCell>
-            <TableCell>{job.company}</TableCell>
-            <TableCell>{job.status}</TableCell>
-            <TableCell>{job.type}</TableCell>
-            <TableCell>{job.dateApplied}</TableCell>
-            <TableCell>
-                <div className="flex gap-3">
-                    <Eye className="border border-rounded p-1" color="green" size={35}/>
-                    <Pen className="border border-rounded p-1" color="blue" size={35}/>
-                </div>
-            </TableCell>
-
+    <div className="rounded-xl border border-gray-200 bg-white">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-gray-50">
+            <TableHead>Job Title</TableHead>
+            <TableHead>Company</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Date Applied</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+
+        <TableBody>
+          {jobs.map((job) => (
+            <TableRow
+              key={job.id}
+              className="hover:bg-gray-50 transition"
+            >
+              <TableCell className="font-medium text-gray-800">
+                {job.title}
+              </TableCell>
+
+              <TableCell className="text-gray-600">
+                {job.company}
+              </TableCell>
+
+              <TableCell>
+                <span
+                  className={clsx(
+                    "px-3 py-1 text-xs font-medium rounded-full",
+                    statusStyles[job.status]
+                  )}
+                >
+                  {job.status}
+                </span>
+              </TableCell>
+
+              <TableCell className="text-gray-600">
+                {job.type}
+              </TableCell>
+
+              <TableCell className="text-gray-500">
+                {job.dateApplied}
+              </TableCell>
+
+              <TableCell>
+                <div className="flex justify-end gap-2">
+                  <button className="p-2 rounded-md border border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition">
+                    <Eye size={18} />
+                  </button>
+
+                  <button className="p-2 rounded-md border border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition">
+                    <Pencil size={18} />
+                  </button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
