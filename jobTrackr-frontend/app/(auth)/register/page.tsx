@@ -18,7 +18,7 @@ import { RegisterUser } from "@/lib/api/auth";
 import axios from "axios";
 
 type RegisterFormData = {
-  username: string;
+  email: string;
   password: string;
 };
 
@@ -37,7 +37,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const response = await RegisterUser({
-        username: data.username,
+        email: data.email,
         password: data.password,
       });
       console.log(response)
@@ -72,8 +72,8 @@ export default function RegisterPage() {
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="you@email.com" {...register("username",{
-                required:"username is required"
+              <Input id="email" type="email" placeholder="you@email.com" {...register("email",{
+                required:"email is required"
               })}/>
             </div>
 

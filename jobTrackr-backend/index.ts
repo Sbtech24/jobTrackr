@@ -47,7 +47,5 @@ app.use("/api/v1/jobs",AuthMiddleWare,jobRoutes)
 app.use("/api/v1/user",AuthMiddleWare,userRoutes)
 
 app.listen(process.env.PORT, async ()=>{
-    await initDb()
-    await initUserTable()
     console.log(`Server is Running on port ${process.env.PORT}`)
 })

@@ -20,7 +20,7 @@ import PasswordField from "@/components/auth/PasswordField";
 import { loginUser } from "@/lib/api/auth";
 import { setAccessToken } from "@/lib/auth/token";
 type LoginFormData = {
-  username: string;
+email: string;
   password: string;
 };
 
@@ -41,7 +41,7 @@ export default function LoginPage() {
 
     try {
       const response = await loginUser({
-  username: data.username,
+  email: data.email,
   password: data.password,
 });
 
@@ -78,13 +78,13 @@ await setAccessToken(response.accessToken);
                 id="email"
                 type="email"
                 placeholder="you@email.com"
-                {...register("username", {
+                {...register("email", {
                   required: "Email is required",
                 })}
               />
-              {errors.username && (
+              {errors.email && (
                 <p className="text-sm text-red-500">
-                  {errors.username.message}
+                  {errors.email.message}
                 </p>
               )}
             </div>

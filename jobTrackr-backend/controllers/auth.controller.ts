@@ -16,21 +16,21 @@ export async function RegisterUser(
   next: NextFunction
 ) {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    const query = `SELECT * from users WHERE username = $1`;
-    const existing = await conn.query(query, [username]);
+    const query = `SELECT * from users WHERE email = $1`;
+    const existing = await conn.query(query, [email]);
     const checkUser = existing.rows[0];
     if (checkUser) {
-      return res.status(400).json({ message: "Username already exists" });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const insert = await conn.query(
-      `INSERT INTO users (username,password) VALUES ($1,$2) RETURNING *`,
-      [username, hashedPassword]
+      `INSERT INTO users (email,password) VALUES ($1,$2) RETURNING *`,
+      [email, hashedPassword]
     );
     const result = insert.rows[0];
 
@@ -45,10 +45,10 @@ export async function RegisterUser(
 
 export async function Login(req: Request, res: Response, next: NextFunction) {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    const query = `SELECT * from users WHERE username = $1`;
-    const result = await conn.query(query, [username]);
+    const query = `SELECT * from users WHERE email = $1`;
+    const result = await conn.query(query, [email]);
     if (result.rows.length === 0)
       return res.status(404).json({ mesage: "User not found" });
     const user = result.rows[0];
@@ -66,12 +66,12 @@ export async function Login(req: Request, res: Response, next: NextFunction) {
     }
 
     const accessToken = jwt.sign(
-      { id: user.id, username: user.username },
+      { id: user.id, email: user.email },
       ACCESS_TOKEN_SECRET,
       { expiresIn: "1h" }
     );
     const refreshToken = jwt.sign(
-      { id: user.id, username: user.username },
+      { id: user.id, email: user.email },
       REFRESH_TOKEN_SECRET as string,
       { expiresIn: "1d" }
     );
@@ -117,17 +117,17 @@ export async function RefreshToken(
     );
     req.user = verifyToken;
     const user = req.user
-    const username = req.user?.username;
+    const email = req.user?.email;
 
-    const query = `SELECT refresh_token FROM users WHERE username =$1 `;
-    const result = await conn.query(query, [username]);
+    const query = `SELECT refresh_token FROM users WHERE email =$1 `;
+    const result = await conn.query(query, [email]);
      const storedRefresh = result.rows[0]?.refresh_token;
 
     if (!storedRefresh || storedRefresh !== cookies.jwt) {
       return res.status(403).json({ message: "Refresh token mismatch" });
     }
 
-      const accessToken = jwt.sign({ id: user.id, username: user.username }, ACCESS_TOKEN_SECRET as string, { expiresIn: "1h" });
+      const accessToken = jwt.sign({ id: user.id, username: user.email }, ACCESS_TOKEN_SECRET as string, { expiresIn: "1h" });
 
     return res.status(200).json({ accessToken });
 

@@ -2,11 +2,11 @@ import api from "./axios";
 import { setAccessToken } from "@/lib/auth/token";
 
 export type LoginPayload = {
-  username: string;
+  email: string;
   password: string;
 };
 export type RegisterPayload = {
-  username: string;
+  email: string;
   password: string;
 };
 export type ForgotPasswordPayload = {
