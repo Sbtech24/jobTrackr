@@ -1,3 +1,4 @@
+"use client";
 import {
   Table,
   TableBody,
@@ -6,59 +7,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Eye, Pencil } from "lucide-react";
+import { Eye, Pencil, Trash } from "lucide-react";
 import clsx from "clsx";
-
-export const jobs = [
-  {
-    id: 1,
-    title: "Frontend Developer",
-    company: "TechNova",
-    status: "Applied",
-    type: "Full-time",
-    dateApplied: "2025-10-12",
-  },
-  {
-    id: 2,
-    title: "Backend Engineer",
-    company: "FinEdge",
-    status: "Interview",
-    type: "Remote",
-    dateApplied: "2025-09-28",
-  },
-  {
-    id: 3,
-    title: "Product Designer",
-    company: "Designify",
-    status: "Offer",
-    type: "Hybrid",
-    dateApplied: "2025-09-21",
-  },
-  {
-    id: 4,
-    title: "Full Stack Developer",
-    company: "CloudWave",
-    status: "Rejected",
-    type: "Contract",
-    dateApplied: "2025-09-10",
-  },
-  {
-    id: 5,
-    title: "Mobile Developer",
-    company: "Appverse",
-    status: "Applied",
-    type: "Full-time",
-    dateApplied: "2025-10-03",
-  },
-  {
-    id: 6,
-    title: "DevOps Engineer",
-    company: "NextHost",
-    status: "Interview",
-    type: "On-site",
-    dateApplied: "2025-09-15",
-  },
-];
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchAllJobs, deleteJob } from "@/lib/api/jobs";
+import { ViewJobModal } from "./ViewJobModal";
+import { useState } from "react";
 
 const statusStyles: Record<string, string> = {
   Applied: "bg-gray-100 text-gray-700",
@@ -68,6 +22,29 @@ const statusStyles: Record<string, string> = {
 };
 
 export default function MyJobsTable() {
+  const [viewJobId, setViewJobId] = useState<string | null>(null);
+
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["jobs"],
+    queryFn: fetchAllJobs,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteJob,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+    },
+  });
+  const handleViewJob = (jobId: string) => {
+    setViewJobId(jobId);
+  };
+
+  if (isLoading) return <p>Loading ...</p>;
+
+  if (error) return <p>Error occured: {error.message}</p>;
+
   return (
     <div className="rounded-xl border border-gray-200 bg-white">
       <Table>
@@ -76,53 +53,59 @@ export default function MyJobsTable() {
             <TableHead>Job Title</TableHead>
             <TableHead>Company</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Type</TableHead>
             <TableHead>Date Applied</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {jobs.map((job) => (
-            <TableRow
-              key={job.id}
-              className="hover:bg-gray-50 transition"
-            >
+          {data.data.map((job: any) => (
+            <TableRow key={job.id} className="hover:bg-gray-50 transition">
               <TableCell className="font-medium text-gray-800">
                 {job.title}
               </TableCell>
 
-              <TableCell className="text-gray-600">
-                {job.company}
-              </TableCell>
+              <TableCell className="text-gray-600">{job.company}</TableCell>
 
               <TableCell>
                 <span
                   className={clsx(
                     "px-3 py-1 text-xs font-medium rounded-full",
-                    statusStyles[job.status]
+                    statusStyles[job.status],
                   )}
                 >
                   {job.status}
                 </span>
               </TableCell>
 
-              <TableCell className="text-gray-600">
-                {job.type}
-              </TableCell>
-
               <TableCell className="text-gray-500">
-                {job.dateApplied}
+                {job.date_applied}
               </TableCell>
 
               <TableCell>
                 <div className="flex justify-end gap-2">
-                  <button className="p-2 rounded-md border border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition">
+                  <button
+                    className="p-2 rounded-md border border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition"
+                    onClick={() => handleViewJob(job.id)}
+                  >
                     <Eye size={18} />
                   </button>
+                  {viewJobId && (
+                    <ViewJobModal
+                      id={viewJobId}
+                      open={!!viewJobId}
+                      onOpenChange={(open) => {
+                        if (!open) setViewJobId(null);
+                      }}
+                    />
+                  )}
 
-                  <button className="p-2 rounded-md border border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition">
-                    <Pencil size={18} />
+                  <button
+                    className="p-2 rounded-md border border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition"
+                    onClick={() => deleteMutation.mutate(job.id)}
+                    disabled={deleteMutation.isPending}
+                  >
+                    <Trash size={18} />
                   </button>
                 </div>
               </TableCell>
