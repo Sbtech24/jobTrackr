@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import MyJobsTable from "@/components/Dashboard/JobsTable";
+// import MyJobsTable from "@/components/Dashboard/JobsTable";
 import { Value } from "@radix-ui/react-select";
 const jobData = [
   { name: "New", value: 2 },
@@ -19,6 +19,9 @@ const jobData = [
   { name: "Discarded", value: 2 },
 ];
 import { Briefcase, Clock, MessageSquare, XCircle } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const MyJobsTable = dynamic(()=> import("@/components/Dashboard/JobsTable"))
 
 const jobStats = [
   {

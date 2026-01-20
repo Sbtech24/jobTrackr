@@ -10,13 +10,13 @@ export async function addJob(req:AuthRequest,res:Response,next:NextFunction){
             return res.status(401).json({message:"Unauthorized"})
         }
 
-        const {title,company,status,description} = req.body 
+        const {title,company,status,description,date_applied} = req.body 
 
         if(!title||!company||!status||!description){
             res.status(400).json({message:"Please provide all neccessary information"})
         }
-        const query = `INSERT INTO jobs(title,company,status,description,user_id) VALUES($1,$2,$3,$4,$5) RETURNING *`
-        const result = await conn.query(query,[title,company,status,description,user])
+        const query = `INSERT INTO jobs(title,company,status,description,date_applied,user_id) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`
+        const result = await conn.query(query,[title,company,status,description,date_applied,user])
         const created = result.rows[0]
         
     res.status(201).json({
@@ -25,7 +25,7 @@ export async function addJob(req:AuthRequest,res:Response,next:NextFunction){
         company:created.company,
         status:created.status,
         description:created.description,
-        date_created:created.date_created
+        date_applied:created.date_applied
     })
 
 

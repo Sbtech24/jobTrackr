@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,27 +11,52 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea"; // s
-import { useState } from "react";
-import dynamic from "next/dynamic";
+import { Textarea } from "@/components/ui/textarea";
+import { useForm, Controller } from "react-hook-form";
+import { addJob,addJobPayLoad } from "@/lib/api/jobs";
+import axios from "axios";
+
+
 
 export default function AddJob() {
-  const [form, setForm] = useState({
-    title: "",
-    company: "",
-    status: "",
-    type: "",
-    dateApplied: "",
-    description: "",
+    const [serverError, setServerError] = useState<string | null>(null);
+  const { register, handleSubmit, control,reset } = useForm<addJobPayLoad>({
+    defaultValues: {
+      title: "",
+      company: "",
+      status: "",
+      date_applied: "",
+      description: "",
+    },
   });
 
-  const handleChange = (key: string, value: string) => {
-    setForm({ ...form, [key]: value });
-  };
+  const onSubmit =async (data: addJobPayLoad) => {
+    console.log("New job added:", data);
+    try{
+      const response = await addJob({
+        title:data.title,
+        company:data.company,
+       status:data.status,
+       description:data.description,
+       date_applied:data.date_applied
+      })
+      console.log(response)
+      reset({
+      title: "",
+      company: "",
+      status: "",
+      date_applied: "",
+      description: "",
+      })
+    }catch(error){
+       if (axios.isAxiosError(error)) {
+        setServerError(error.response?.data?.message || "Login failed");
+        console.log(error)
+      } else {
+        setServerError("Something went wrong");
+      }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("New job added:", form);
+    }
   };
 
   return (
@@ -45,15 +71,14 @@ export default function AddJob() {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Job Title */}
             <div className="space-y-2">
               <Label htmlFor="title">Job Title</Label>
               <Input
                 id="title"
                 placeholder="e.g. Frontend Developer"
-                value={form.title}
-                onChange={(e) => handleChange("title", e.target.value)}
+                {...register("title")}
               />
             </div>
 
@@ -63,8 +88,7 @@ export default function AddJob() {
               <Input
                 id="company"
                 placeholder="e.g. TechNova"
-                value={form.company}
-                onChange={(e) => handleChange("company", e.target.value)}
+                {...register("company")}
               />
             </div>
 
@@ -72,24 +96,27 @@ export default function AddJob() {
             <div className="grid sm:grid-cols-2 gap-5">
               <div className="space-y-2">
                 <Label>Status</Label>
-                <Select
-                  value={form.status}
-                  onValueChange={(val) => handleChange("status", val)}
-                  
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Applied">Applied</SelectItem>
-                    <SelectItem value="Interview">Interview</SelectItem>
-                    <SelectItem value="Offer">Offer</SelectItem>
-                    <SelectItem value="Rejected">Rejected</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="status"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Applied">Applied</SelectItem>
+                        <SelectItem value="Interview">Interview</SelectItem>
+                        <SelectItem value="Offer">Offer</SelectItem>
+                        <SelectItem value="Rejected">Rejected</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
-
-              {/* Job Type */}
             </div>
 
             {/* Job Description */}
@@ -98,9 +125,8 @@ export default function AddJob() {
               <Textarea
                 id="description"
                 placeholder="Write a short description about the job..."
-                value={form.description}
-                onChange={(e) => handleChange("description", e.target.value)}
                 className="resize-none min-h-[120px]"
+                {...register("description")}
               />
             </div>
 
@@ -110,8 +136,7 @@ export default function AddJob() {
               <Input
                 type="date"
                 id="date"
-                value={form.dateApplied}
-                onChange={(e) => handleChange("dateApplied", e.target.value)}
+                {...register("date_applied")}
               />
             </div>
 
