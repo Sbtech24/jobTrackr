@@ -1,9 +1,12 @@
+"use client"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Dashboard/Sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { useUser } from "@/components/context/UserProfileContext";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const {user,isLoading} = useUser()
   return (
     <SidebarProvider>
       {/* Root Flex Container */}
@@ -26,10 +29,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             {/* Right Section */}
             <div className="flex items-center gap-3">
-              <p className="font-medium text-gray-700 hidden sm:block">Semilore</p>
+              <p className="font-medium text-gray-700 hidden sm:block">{user?.username}</p>
               <Avatar className="h-9 w-9 ring-2 ring-jobtrackr-primary/10">
-                <AvatarImage src="https://github.com/shadcn.png" alt="User" />
-                <AvatarFallback>SB</AvatarFallback>
+                <AvatarImage src={user?.profilePic || ""} alt="User" />
+                <AvatarFallback>{user?.username.slice(0,2)}</AvatarFallback>
               </Avatar>
             </div>
           </header>

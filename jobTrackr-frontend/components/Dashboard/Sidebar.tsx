@@ -23,6 +23,7 @@ import {
 import { logOut } from "@/lib/api/auth"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useUser } from "../context/UserProfileContext"
 const items = [
   {
     title: "Dashboard",
@@ -49,6 +50,7 @@ const items = [
 export function AppSidebar() {
   const router = useRouter()
   const [serverError, setServerError] = useState<string | null>(null);
+  const {user,isLoading} = useUser()
   
 
 
@@ -116,7 +118,7 @@ export function AppSidebar() {
           <div className="flex items-center justify-between px-3">
             <div className="flex flex-col">
               <span className="text-sm font-medium">
-                Semilore
+                {user?.username}
               </span>
               <span className="text-xs text-white/60">
                 Logged in

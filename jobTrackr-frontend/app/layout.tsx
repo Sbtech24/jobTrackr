@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import ClientInit from "@/components/auth/ClientInit"
 import {QueryClient,QueryClientProvider} from "@tanstack/react-query"
+import { UserContextProvider } from "@/components/context/UserProfileContext"
 
 
 const client = new QueryClient()
@@ -31,11 +32,15 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-gray-50 text-gray-900 min-h-screen antialiased`}
       >
+       
         <QueryClientProvider client={client}>
+           <UserContextProvider>
 
   
         <ClientInit>{children}</ClientInit>
+        </UserContextProvider>
        </QueryClientProvider>
+       
       </body>
     </html>
   )

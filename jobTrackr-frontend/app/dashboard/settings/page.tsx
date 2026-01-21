@@ -8,13 +8,14 @@ import { useState } from "react";
 import axios from "axios";
 import { forgotPassword } from "@/lib/api/auth";
 import { SuccessModal } from "@/components/shared/SuccessModal";
-
+import { useUser } from "@/components/context/UserProfileContext";
 type ForgotPasswordFormData = {
   newPassword: string;
   confirmPassword: string;
 };
 
 export default function Settings() {
+  const {user,isLoading} = useUser()
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -82,7 +83,7 @@ export default function Settings() {
                 </label>
                 <input
                   type="text"
-                  defaultValue="Semilore"
+                  defaultValue={user?.username}
                   disabled
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed text-gray-600"
                 />
@@ -94,7 +95,7 @@ export default function Settings() {
                 </label>
                 <input
                   type="text"
-                  defaultValue="Semilore@gmail.com"
+                  defaultValue={user?.email}
                   disabled
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed text-gray-600"
                 />
