@@ -15,11 +15,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm, Controller } from "react-hook-form";
 import { addJob,addJobPayLoad } from "@/lib/api/jobs";
 import axios from "axios";
-
+import { SuccessModal } from "@/components/shared/SuccessModal";
 
 
 export default function AddJob() {
     const [serverError, setServerError] = useState<string | null>(null);
+    const [showSuccessModal,setShowSuccessModal] = useState(false)
   const { register, handleSubmit, control,reset } = useForm<addJobPayLoad>({
     defaultValues: {
       title: "",
@@ -41,6 +42,7 @@ export default function AddJob() {
        date_applied:data.date_applied
       })
       console.log(response)
+      setShowSuccessModal(true)
       reset({
       title: "",
       company: "",
@@ -152,6 +154,7 @@ export default function AddJob() {
           </form>
         </CardContent>
       </Card>
+      <SuccessModal open={showSuccessModal} onOpenChange={setShowSuccessModal} message={"New job Added successfully"}/>
     </div>
   );
 }

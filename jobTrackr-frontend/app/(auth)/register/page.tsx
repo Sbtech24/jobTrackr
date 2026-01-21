@@ -18,6 +18,7 @@ import { RegisterUser } from "@/lib/api/auth";
 import axios from "axios";
 
 type RegisterFormData = {
+  username:string
   email: string;
   password: string;
 };
@@ -37,8 +38,10 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const response = await RegisterUser({
+        
         email: data.email,
         password: data.password,
+        username:data.username
       });
       console.log(response)
       router.replace("/login");
@@ -65,10 +68,12 @@ export default function RegisterPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onsubmit)} className="space-y-4">
-            {/* <div className="space-y-2">
+            <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" placeholder="John Doe" />
-            </div> */}
+              <Input id="name" placeholder="John Doe"{...register("username",{
+                required:"username is required"
+              })} />
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>

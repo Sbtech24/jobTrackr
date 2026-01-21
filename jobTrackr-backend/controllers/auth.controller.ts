@@ -16,7 +16,7 @@ export async function RegisterUser(
   next: NextFunction
 ) {
   try {
-    const { email, password } = req.body;
+    const { email, password,username } = req.body;
 
     const query = `SELECT * from users WHERE email = $1`;
     const existing = await conn.query(query, [email]);
@@ -29,8 +29,8 @@ export async function RegisterUser(
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const insert = await conn.query(
-      `INSERT INTO users (email,password) VALUES ($1,$2) RETURNING *`,
-      [email, hashedPassword]
+      `INSERT INTO users (email,password,username) VALUES ($1,$2,$3) RETURNING *`,
+      [email,hashedPassword,username]
     );
     const result = insert.rows[0];
 
