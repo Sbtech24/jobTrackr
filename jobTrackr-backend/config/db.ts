@@ -1,16 +1,16 @@
-import dotenv from "dotenv"
-import {Client} from "pg"
+import dotenv from "dotenv";
+import pkg from "pg";
+const { Client } = pkg;
 
-dotenv.config()
+dotenv.config();
 
- const conn = new Client({
- user: 'postgres',
-  password: 'admin',
-  host: 'localhost',
-  port: 5432,
-  database: 'jobTrackr',
-})
+const conn = new Client({
+  connectionString: process.env.DATABASE_URL, 
+  ssl: {
+    rejectUnauthorized: false, 
+  },
+});
 
-await conn.connect()
+await conn.connect();
 
-export {conn}
+export { conn };
