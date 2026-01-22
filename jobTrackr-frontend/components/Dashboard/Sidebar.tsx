@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   Home,
   CirclePlus,
@@ -7,7 +7,7 @@ import {
   Briefcase,
   LogOut,
   X,
-} from "lucide-react"
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -19,11 +19,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { logOut } from "@/lib/api/auth"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { useUser } from "../context/UserProfileContext"
+} from "@/components/ui/sidebar";
+import { logOut } from "@/lib/api/auth";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useUser } from "../context/UserProfileContext";
+import { useAuth } from "../context/AuthContext";
+import { useQueryClient } from "@tanstack/react-query";
 const items = [
   {
     title: "Dashboard",
@@ -45,25 +47,27 @@ const items = [
     url: "/dashboard/settings",
     icon: Settings,
   },
-]
+];
 
 export function AppSidebar() {
-  const router = useRouter()
+  const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
-  const {user,isLoading} = useUser()
-  
+  const { user, isLoading } = useUser();
+  const { setIsAuthenticated } = useAuth();
+  const queryClient = useQueryClient();
 
-
-  const handleLogout = async ()=>{
-    try{
-      const response = await logOut()
-      console.log(response)
-      router.push("/login")
-
-    }catch(error){
-      console.log(error)
+  const handleLogout = async () => {
+    try {
+      const response = await logOut();
+      console.log(response);
+      setIsAuthenticated(false);
+      queryClient.removeQueries({ queryKey: ["user"] });
+      queryClient.removeQueries({ queryKey: ["jobs"] });
+      router.push("/login");
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
   return (
     <Sidebar className="bg-primary text-white">
       <SidebarContent className="flex h-full flex-col px-4 py-6">
@@ -99,9 +103,7 @@ export function AppSidebar() {
                   >
                     <a href={item.url}>
                       <item.icon className="h-5 w-5" />
-                      <span className="text-sm font-medium">
-                        {item.title}
-                      </span>
+                      <span className="text-sm font-medium">{item.title}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -117,12 +119,8 @@ export function AppSidebar() {
         <div className="border-t border-white/10 pt-4">
           <div className="flex items-center justify-between px-3">
             <div className="flex flex-col">
-              <span className="text-sm font-medium">
-                {user?.username}
-              </span>
-              <span className="text-xs text-white/60">
-                Logged in
-              </span>
+              <span className="text-sm font-medium">{user?.username}</span>
+              <span className="text-xs text-white/60">Logged in</span>
             </div>
 
             <button
@@ -141,5 +139,5 @@ export function AppSidebar() {
         </div>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

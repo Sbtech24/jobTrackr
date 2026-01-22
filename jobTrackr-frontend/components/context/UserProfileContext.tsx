@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { UserProfile } from "@/lib/api/user";
+import { useAuth } from "./AuthContext";
 
 interface User {
   username: string;
@@ -25,10 +26,13 @@ interface UserContextProps {
 const UserContext = createContext<UserContextProps | null>(null);
 
 export const UserContextProvider = ({ children }: { children: ReactNode }) => {
+    const {isAuthenticated,isAuthReady} = useAuth()
+
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["user"],
+    queryKey: ["user",isAuthenticated],
     queryFn: UserProfile,
     staleTime: 1000 * 60 * 5, // prevents unnecessary refetches
+    enabled:isAuthReady && isAuthenticated, 
   });
 
   // memoized user value

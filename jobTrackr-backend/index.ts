@@ -20,14 +20,6 @@ dotenv.config();
 
 const app = express();
 
-app.use(express.json());
-
-// Middleware
-app.use(express.json());
-app.use(morgan("combined"));
-
-// Rate limit middleware
-app.use(limiter);
 
 // cors
 app.use(
@@ -39,6 +31,15 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+// Middleware
+app.use(express.json());
+app.use(morgan("combined"));
+
+// Rate limit middleware
+app.use(limiter);
+
+
 
 // middleware for cookies
 app.use(cookieParser());

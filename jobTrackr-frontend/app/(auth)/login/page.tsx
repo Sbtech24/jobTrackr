@@ -19,8 +19,10 @@ import {
 import PasswordField from "@/components/auth/PasswordField";
 import { loginUser } from "@/lib/api/auth";
 import { setAccessToken } from "@/lib/auth/token";
+import { useAuth } from "@/components/context/AuthContext";
+import { useQueryClient } from "@tanstack/react-query";
 type LoginFormData = {
-email: string;
+  email: string;
   password: string;
 };
 
@@ -28,6 +30,8 @@ export default function LoginPage() {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { setIsAuthenticated } = useAuth();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -41,13 +45,18 @@ export default function LoginPage() {
 
     try {
       const response = await loginUser({
-  email: data.email,
-  password: data.password,
-});
+        email: data.email,
+        password: data.password,
+      });
 
-await setAccessToken(response.accessToken);
+      await setAccessToken(response.accessToken);
+      setIsAuthenticated(true);
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          ["user", "jobs"].includes(query.queryKey[0] as string),
+      });
 
-  router.replace("/dashboard");
+      router.replace("/dashboard");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setServerError(error.response?.data?.message || "Login failed");
@@ -83,9 +92,7 @@ await setAccessToken(response.accessToken);
                 })}
               />
               {errors.email && (
-                <p className="text-sm text-red-500">
-                  {errors.email.message}
-                </p>
+                <p className="text-sm text-red-500">{errors.email.message}</p>
               )}
             </div>
 

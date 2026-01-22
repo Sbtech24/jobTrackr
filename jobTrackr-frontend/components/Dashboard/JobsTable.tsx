@@ -13,6 +13,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchAllJobs, deleteJob } from "@/lib/api/jobs";
 import { ViewJobModal } from "./ViewJobModal";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const statusStyles: Record<string, string> = {
   Applied: "bg-gray-100 text-gray-700",
@@ -23,12 +24,15 @@ const statusStyles: Record<string, string> = {
 
 export default function MyJobsTable() {
   const [viewJobId, setViewJobId] = useState<string | null>(null);
+  const{isAuthenticated,isAuthReady} = useAuth()
+
 
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["jobs"],
     queryFn: fetchAllJobs,
+    enabled:isAuthenticated
   });
 
   const deleteMutation = useMutation({
@@ -59,7 +63,7 @@ export default function MyJobsTable() {
         </TableHeader>
 
         <TableBody>
-          {data.data.map((job: any) => (
+          {data?.data.map((job: any) => (
             <TableRow key={job.id} className="hover:bg-gray-50 transition">
               <TableCell className="font-medium text-gray-800">
                 {job.title}
