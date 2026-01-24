@@ -1,23 +1,26 @@
 // middleware.ts
 import { NextRequest, NextResponse } from "next/server";
 
-export function proxy(req: NextRequest) {
-  const { pathname, searchParams } = req.nextUrl;
+export async function proxy(req: NextRequest) {
+  // Forward the cookies
+  const cookie = req.headers.get("cookie");
 
+  const res = await fetch("https://jobtrackr-production.up.railway.app/api/v1/auth/refresh", {
+    method: "POST",
+    headers: {
+      "cookie": cookie || "",
+      "Content-Type": "application/json",
+    },
+    credentials: "include", // ✅ important
+  });
 
-  if (searchParams.has("_rsc")) {
-    return NextResponse.next();
-  }
-
-  const refreshToken = req.cookies.get("jwt");
-  // console.log(req.cookies.getAll())
-
-  if (!refreshToken) {
+  if (!res.ok) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return NextResponse.next();
 }
+
 
 export const config = {
   matcher: ["/dashboard/:path*"],
