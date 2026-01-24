@@ -2,7 +2,7 @@ import axios from "axios";
 import { getAccessToken } from "@/lib/auth/token";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/api/v1",
+  baseURL: "http://jobtrackr-production.up.railway.app/api/v1",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

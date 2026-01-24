@@ -1,9 +1,0 @@
-{
-  "dev": {
-    "driver": "pg",
-    "host": "localhost",
-    "database": "jobTrackr",
-    "user": "postgres",
-    "password": "admin"
-  }
-}
