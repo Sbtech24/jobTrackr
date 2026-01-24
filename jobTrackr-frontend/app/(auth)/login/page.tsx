@@ -50,13 +50,13 @@ export default function LoginPage() {
       });
 
       await setAccessToken(response.accessToken);
+      router.replace("/dashboard");
       setIsAuthenticated(true);
       queryClient.invalidateQueries({
         predicate: (query) =>
           ["user", "jobs"].includes(query.queryKey[0] as string),
       });
 
-      router.replace("/dashboard");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setServerError(error.response?.data?.message || "Login failed");
