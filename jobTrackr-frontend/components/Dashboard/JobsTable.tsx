@@ -14,6 +14,7 @@ import { fetchAllJobs, deleteJob } from "@/lib/api/jobs";
 import { ViewJobModal } from "./ViewJobModal";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const statusStyles: Record<string, string> = {
   Applied: "bg-gray-100 text-gray-700",
@@ -45,8 +46,6 @@ export default function MyJobsTable() {
     setViewJobId(jobId);
   };
 
-  if (isLoading) return <p>Loading ...</p>;
-
   if (error) return <p>Error occured: {error.message}</p>;
 
   return (
@@ -63,7 +62,31 @@ export default function MyJobsTable() {
         </TableHeader>
 
         <TableBody>
-          {data?.data.map((job: any) => (
+          {isLoading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <TableRow key={index} className="hover:bg-gray-50 transition">
+                <TableCell>
+                  <Skeleton className="h-4 w-32" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-24" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-28" />
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-end gap-2">
+                    <Skeleton className="h-9 w-9 rounded-md" />
+                    <Skeleton className="h-9 w-9 rounded-md" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            data?.data.map((job: any) => (
             <TableRow key={job.id} className="hover:bg-gray-50 transition">
               <TableCell className="font-medium text-gray-800">
                 {job.title}
@@ -114,7 +137,8 @@ export default function MyJobsTable() {
                 </div>
               </TableCell>
             </TableRow>
-          ))}
+          ))
+          )}
         </TableBody>
       </Table>
     </div>

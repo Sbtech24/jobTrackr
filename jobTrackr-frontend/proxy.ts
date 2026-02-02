@@ -10,7 +10,7 @@ export function proxy(req: NextRequest) {
   }
 
   const refreshToken = req.cookies.get("jwt");
-  console.log(req.cookies.getAll())
+  // console.log(refreshToken)
 
   // if (!refreshToken) {
   //   return NextResponse.redirect(new URL("/login", req.url));

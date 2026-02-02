@@ -2,6 +2,7 @@
 
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -81,24 +82,32 @@ export default function Settings() {
                 <label className="text-sm font-medium text-gray-600">
                   Name
                 </label>
-                <input
-                  type="text"
-                  defaultValue={user?.username}
-                  disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed text-gray-600"
-                />
+                {isLoading ? (
+                  <Skeleton className="w-full h-10 rounded-lg" />
+                ) : (
+                  <input
+                    type="text"
+                    defaultValue={user?.username}
+                    disabled
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed text-gray-600"
+                  />
+                )}
               </div>
 
               <div className="flex flex-col space-y-2">
                 <label className="text-sm font-medium text-gray-600">
                   Email
                 </label>
-                <input
-                  type="text"
-                  defaultValue={user?.email}
-                  disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed text-gray-600"
-                />
+                {isLoading ? (
+                  <Skeleton className="w-full h-10 rounded-lg" />
+                ) : (
+                  <input
+                    type="text"
+                    defaultValue={user?.email}
+                    disabled
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed text-gray-600"
+                  />
+                )}
               </div>
             </div>
           </div>

@@ -34,7 +34,7 @@ export function ViewJobModal({
 }: ViewJobModalProps) {
   const {data,isLoading,error} = useQuery({queryKey:["job"],queryFn:()=>fetchJobById(id)})
 
-  if(isLoading) return <p>Loading...</p>
+  // if(isLoading) return <p>Loading...</p>
 
   if(error) return <p>Erro showing job {error.message}</p>
 
