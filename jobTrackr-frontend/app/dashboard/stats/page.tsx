@@ -1,43 +1,85 @@
-
+import { Briefcase, Clock, MessageSquare, XCircle } from "lucide-react";
 import dynamic from "next/dynamic";
-const jobData = [
-  { name: "Total Jobs", value: 2 },
-  { name: "Interviews", value: 3 },
-  { name: "Offers", value: 2 },
-  { name: "Rejections", value: 2 },
+import { Skeleton } from "@/components/ui/skeleton";
+const jobData =  [
+  {
+    label: "New",
+    value: 2,
+    icon: Briefcase,
+    bg: "bg-blue-50",
+    text: "text-blue-700",
+  },
+  {
+    label: "In Progress",
+    value: 3,
+    icon: Clock,
+    bg: "bg-amber-50",
+    text: "text-amber-700",
+  },
+  {
+    label: "Interview",
+    value: 2,
+    icon: MessageSquare,
+    bg: "bg-purple-50",
+    text: "text-purple-700",
+  },
+  {
+    label: "Discarded",
+    value: 2,
+    icon: XCircle,
+    bg: "bg-red-50",
+    text: "text-red-700",
+  },
 ];
 
-const JobBarChart = dynamic(()=>import('@/components/stats/Barchart'))
-const JobStatusPieChart = dynamic(()=>import("@/components/stats/PieChart"))
+const JobBarChart = dynamic(()=>import('@/components/stats/Barchart'), {
+  loading: () => <Skeleton className="w-full h-[300px] rounded-lg" />
+})
+const JobStatusPieChart = dynamic(()=>import("@/components/stats/PieChart"), {
+  loading: () => <Skeleton className="w-full h-[300px] rounded-lg" />
+})
 const StatsPage = () => {
   return (
     <div>
       <h1 className="text-2xl font-semibold md:text-3xl">Stats</h1>
       <section>
         <div className="rounded-2xl p-6 space-y-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {jobData.map((item, i) => (
+         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {jobData.map((stat) => {
+            const Icon = stat.icon;
+
+            return (
               <div
-                key={i}
+                key={stat.label}
                 className="
-                  rounded-xl border border-gray-200
-                  p-4 bg-white
-                  transition
-                  hover:border-indigo-300
-                  hover:bg-indigo-50/40
-                  hover:shadow-md
-                  cursor-pointer
+                  rounded-2xl border border-gray-200 bg-white
+                  p-5 transition
+                  hover:shadow-sm
                 "
               >
-                <p className="mt-2 text-3xl font-semibold text-gray-900">
-                  {item.value}
-                </p>
-                <p className="text-sm font-medium text-gray-500 capitalize">
-                  {item.name}
-                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">
+                      {stat.label}
+                    </p>
+                    <p className="mt-2 text-3xl font-semibold text-gray-900">
+                      {stat.value}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`
+                      h-10 w-10 rounded-full flex items-center justify-center
+                      ${stat.bg} ${stat.text}
+                    `}
+                  >
+                    <Icon size={18} />
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
+        </div>
         </div>
       </section>
 

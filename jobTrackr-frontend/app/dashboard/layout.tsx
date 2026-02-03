@@ -4,6 +4,7 @@ import { AppSidebar } from "@/components/Dashboard/Sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { useUser } from "@/components/context/UserProfileContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const {user,isLoading} = useUser()
@@ -29,11 +30,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             {/* Right Section */}
             <div className="flex items-center gap-3">
-              <p className="font-medium text-gray-700 hidden sm:block">{user?.username}</p>
-              <Avatar className="h-9 w-9 ring-2 ring-jobtrackr-primary/10">
-                <AvatarImage src={user?.profilePic || ""} alt="User" />
-                <AvatarFallback>{user?.username.slice(0,2)}</AvatarFallback>
-              </Avatar>
+              {isLoading ? (
+                <Skeleton className="w-32 h-6 hidden sm:block" />
+              ) : (
+                <p className="font-medium text-gray-700 hidden sm:block">{user?.username}</p>
+              )}
+              {isLoading ? (
+                <Skeleton className="h-9 w-9 rounded-full" />
+              ) : (
+                <Avatar className="h-9 w-9 ring-2 ring-jobtrackr-primary/10">
+                  <AvatarImage src={user?.profilePic || ""} alt="User" />
+                  <AvatarFallback>{user?.username.slice(0,2)}</AvatarFallback>
+                </Avatar>
+              )}
             </div>
           </header>
 

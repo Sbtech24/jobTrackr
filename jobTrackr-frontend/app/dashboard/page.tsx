@@ -1,27 +1,7 @@
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-// import MyJobsTable from "@/components/Dashboard/JobsTable";
-import { Value } from "@radix-ui/react-select";
-const jobData = [
-  { name: "New", value: 2 },
-  { name: "In progress", value: 3 },
-  { name: "Interview", value: 2 },
-  { name: "Discarded", value: 2 },
-];
 import { Briefcase, Clock, MessageSquare, XCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 
-const MyJobsTable = dynamic(()=> import("@/components/Dashboard/JobsTable"))
+const MyJobsTable = dynamic(() => import("@/components/Dashboard/JobsTable"));
 
 const jobStats = [
   {
@@ -61,15 +41,11 @@ export default function Dashboard() {
       </h1>
 
       {/* Job Stats */}
-       {/* Overview */}
+      {/* Overview */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800">
-            Overview
-          </h2>
-          <p className="text-sm text-gray-500">
-            Your job application summary
-          </p>
+          <h2 className="text-lg font-semibold text-gray-800">Overview</h2>
+          <p className="text-sm text-gray-500">Your job application summary</p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -113,9 +89,7 @@ export default function Dashboard() {
       {/* Jobs Table */}
       <section>
         <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-6">
-          <h2 className="text-lg font-semibold text-gray-800">
-            My Jobs
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-800">My Jobs</h2>
 
           <MyJobsTable />
         </div>
