@@ -1,7 +1,7 @@
-// middleware.ts
+
 import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
   // Allow the RSC requests to pass through
