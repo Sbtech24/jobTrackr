@@ -1,7 +1,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
+import { UserProfile } from "./lib/api/user";
 
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
   // Allow the RSC requests to pass through
@@ -26,7 +27,8 @@ export function proxy(req: NextRequest) {
   }
 
   // TODO: optionally verify the token by decoding or calling your API endpoint
-  return NextResponse.next();
+  //  fetch user 
+ 
 }
 
 export const config = {

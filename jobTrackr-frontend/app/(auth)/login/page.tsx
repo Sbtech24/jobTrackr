@@ -48,10 +48,10 @@ export default function LoginPage() {
         email: data.email,
         password: data.password,
       });
-
-      await setAccessToken(response.accessToken);
-      router.replace("/dashboard");
       setIsAuthenticated(true);
+
+      router.replace("/dashboard");
+      
       queryClient.invalidateQueries({
         predicate: (query) =>
           ["user", "jobs"].includes(query.queryKey[0] as string),

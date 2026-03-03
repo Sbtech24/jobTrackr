@@ -14,7 +14,7 @@ export async function addJob(data: addJobPayLoad) {
   return res.data;
 }
 export async function fetchAllJobs() {
-  const res = await api.get("/jobs");
+  const res = await api.get("/api/jobs");
   return res.data;
 }
 export async function deleteJob(id:string) {
