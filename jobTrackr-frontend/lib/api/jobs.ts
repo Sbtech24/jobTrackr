@@ -10,7 +10,7 @@ export interface addJobPayLoad{
 }
 
 export async function addJob(data: addJobPayLoad) {
-  const res = await api.post("/jobs", data);
+  const res = await api.post("/api/jobs", data);
   return res.data;
 }
 export async function fetchAllJobs() {
@@ -18,11 +18,11 @@ export async function fetchAllJobs() {
   return res.data;
 }
 export async function deleteJob(id:string) {
-  const res = await api.delete(`/jobs/${id}`);
+  const res = await api.delete(`/api/jobs/${id}`);
   return res.data;
 }
 export async function fetchJobById(id: string) {
-  const res = await api.get(`/jobs/${id}`);
+  const res = await api.get(`/api/jobs/${id}`);
   return res.data.data[0];
 }
 
