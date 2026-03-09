@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getAccessToken } from "@/lib/auth/token";
+
 
 const api = axios.create({
   baseURL: "/",

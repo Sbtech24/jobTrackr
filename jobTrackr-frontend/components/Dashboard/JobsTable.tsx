@@ -30,7 +30,7 @@ export default function MyJobsTable() {
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error,refetch } = useQuery({
     queryKey: ["jobs"],
     queryFn: fetchAllJobs,
     enabled:isAuthenticated
@@ -124,6 +124,7 @@ export default function MyJobsTable() {
                       onOpenChange={(open) => {
                         if (!open) setViewJobId(null);
                       }}
+                      refetch={refetch}
                     />
                   )}
 

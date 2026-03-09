@@ -25,5 +25,9 @@ export async function fetchJobById(id: string) {
   const res = await api.get(`/api/jobs/${id}`);
   return res.data.data[0];
 }
+export async function UpdateJobById(id: string,payload:any) {
+  const res = await api.patch(`/api/jobs/${id}`,payload);
+  return res.data.data[0];
+}
 
 
