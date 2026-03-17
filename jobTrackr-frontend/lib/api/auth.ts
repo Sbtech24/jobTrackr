@@ -38,6 +38,7 @@ export async function RegisterUser(data:RegisterPayload) {
   });
 
   const response = await res.json()
+  console.log(response)
 
   return response;
 }
