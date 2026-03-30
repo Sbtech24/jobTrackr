@@ -7,13 +7,12 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useQuery } from "@tanstack/react-query";
+import { fetchOverviewData } from "@/lib/api/overview";
 
-const data = [
-  { name: "Applied", value: 40 },
-  { name: "Interview", value: 15 },
-  { name: "Offer", value: 8 },
-  { name: "Rejected", value: 22 },
-];
+
+
+
 
 const COLORS = {
   Applied: "#22c55e",
@@ -41,7 +40,22 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
+interface chatItem{
+  name:string,
+}
+
 const JobStatusPieChart = () => {
+    const { data, isLoading } = useQuery({
+    queryKey: ["overview"],
+    queryFn: fetchOverviewData,
+  });
+  
+  const chartData = [
+    { name: "Applied", value: data?.overview.applied || 0 },
+    { name: "Interview", value: data?.overview.interview || 0 },
+    { name: "Offer", value: data?.overview.offer || 0 },
+    { name: "Rejected", value: data?.overview.rejected || 0 },
+];
   return (
     <div className="bg-white p-4 rounded-lg border shadow-sm h-[300px]">
       <h1 className="text-lg font-semibold mb-3">Job status</h1>
@@ -52,7 +66,7 @@ const JobStatusPieChart = () => {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={data}
+                data={chartData}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
@@ -61,7 +75,7 @@ const JobStatusPieChart = () => {
                 innerRadius={55}
                 paddingAngle={3}
               >
-                {data.map((entry) => (
+                {chartData?.map((entry) => (
                   <Cell
                     key={entry.name}
                     fill={COLORS[entry.name as keyof typeof COLORS]}
@@ -76,7 +90,7 @@ const JobStatusPieChart = () => {
 
         {/* Custom Legend */}
         <div className="w-1/2 flex flex-col gap-3 pl-4">
-          {data.map((item) => (
+          {chartData?.map((item:chatItem) => (
             <div
               key={item.name}
               className="flex items-center justify-between text-sm"
@@ -91,7 +105,7 @@ const JobStatusPieChart = () => {
                 />
                 <span className="font-medium">{item.name}</span>
               </div>
-              {/* <span className="text-gray-600">{item.value}</span> */}
+            
             </div>
           ))}
         </div>
