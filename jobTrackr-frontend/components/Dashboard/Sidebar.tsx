@@ -59,13 +59,13 @@ export function AppSidebar() {
   const handleLogout = async () => {
     try {
       const response = await logOut();
-      console.log(response);
+    
       setIsAuthenticated(false);
       queryClient.removeQueries({ queryKey: ["user"] });
       queryClient.removeQueries({ queryKey: ["jobs"] });
       router.push("/login");
     } catch (error) {
-      console.log(error);
+     
     }
   };
   return (

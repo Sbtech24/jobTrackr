@@ -1,3 +1,4 @@
+import { Overview } from "@/components/shared/Overview";
 import { Briefcase, Clock, MessageSquare, XCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 
@@ -40,50 +41,14 @@ export default function Dashboard() {
         Dashboard
       </h1>
 
-      {/* Job Stats */}
-      {/* Overview */}
+
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-800">Overview</h2>
           <p className="text-sm text-gray-500">Your job application summary</p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {jobStats.map((stat) => {
-            const Icon = stat.icon;
-
-            return (
-              <div
-                key={stat.label}
-                className="
-                  rounded-2xl border border-gray-200 bg-white
-                  p-5 transition
-                  hover:shadow-sm
-                "
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">
-                      {stat.label}
-                    </p>
-                    <p className="mt-2 text-3xl font-semibold text-gray-900">
-                      {stat.value}
-                    </p>
-                  </div>
-
-                  <div
-                    className={`
-                      h-10 w-10 rounded-full flex items-center justify-center
-                      ${stat.bg} ${stat.text}
-                    `}
-                  >
-                    <Icon size={18} />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+       <Overview/>
       </section>
 
       {/* Jobs Table */}
