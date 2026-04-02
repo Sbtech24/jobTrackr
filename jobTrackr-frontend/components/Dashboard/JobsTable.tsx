@@ -106,7 +106,7 @@ export default function MyJobsTable() {
               </TableCell>
 
               <TableCell className="text-gray-500">
-                {job.date_applied}
+                {job.date_applied.split("T")[0]}
               </TableCell>
 
               <TableCell>

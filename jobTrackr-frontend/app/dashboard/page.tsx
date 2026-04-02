@@ -43,7 +43,7 @@ export default function Dashboard() {
 
 
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-center justify-between lg:flex-row">
           <h2 className="text-lg font-semibold text-gray-800">Overview</h2>
           <p className="text-sm text-gray-500">Your job application summary</p>
         </div>

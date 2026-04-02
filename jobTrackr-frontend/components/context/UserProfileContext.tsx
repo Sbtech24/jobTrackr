@@ -13,7 +13,7 @@ import { useAuth } from "./AuthContext";
 interface User {
   username: string;
   email: string;
-  profilePic: string | null;
+  profile_pic: string | null;
 }
 
 interface UserContextProps {

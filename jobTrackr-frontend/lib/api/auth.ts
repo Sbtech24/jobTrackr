@@ -44,8 +44,12 @@ export async function RegisterUser(data:RegisterPayload) {
 }
 
 export async function logOut() {
-  const res = await api.post("/api/auth/logout");
-  return res.data;
+  const res = await fetch("/api/auth/logout",{
+    method:"POST",
+    headers: { "Content-Type": "application/json" },
+  });
+  const data = await res.json()
+  return data;
 }
 
 export async function refreshAccessToken() {

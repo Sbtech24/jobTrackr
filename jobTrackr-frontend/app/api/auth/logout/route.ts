@@ -13,7 +13,10 @@ export async function POST(){
     return NextResponse.json(data, { status: r.status });
   }
 
- return NextResponse.json(data, { status: r.status })
+  const res  = NextResponse.json({ok:true})
+
+  res.cookies.delete("jwt")
+ return res
 
 
 }

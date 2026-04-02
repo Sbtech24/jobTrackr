@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/Dashboard/Sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,7 +7,7 @@ import { useUser } from "@/components/context/UserProfileContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const {user,isLoading} = useUser()
+  const { user, isLoading } = useUser();
   return (
     <SidebarProvider>
       {/* Root Flex Container */}
@@ -33,13 +33,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               {isLoading ? (
                 <Skeleton className="w-32 h-6 hidden sm:block" />
               ) : (
-                <p className="font-medium text-gray-700 hidden sm:block">{user?.username}</p>
+                <p className="font-medium text-gray-700 hidden sm:block">
+                  {user?.username}
+                </p>
               )}
               {isLoading ? (
                 <Skeleton className="h-9 w-9 rounded-full" />
               ) : (
                 <Avatar className="h-9 w-9 ring-2 ring-jobtrackr-primary/10">
-                  <AvatarImage src={user?.profilePic || ""} alt="User" />
+                  <AvatarImage src={user?.profile_pic || ""} alt="User" className="place-items-center"/>
                   <AvatarFallback>{user?.username.slice(0,2)}</AvatarFallback>
                 </Avatar>
               )}
